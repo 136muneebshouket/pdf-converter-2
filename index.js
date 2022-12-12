@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 
-const cors = require('cors')
+
 const multer = require('multer')
 // const libre = require('libreoffice-convert');
 const async = require('async');
@@ -13,11 +13,17 @@ const imagesToPdf = require("images-to-pdf");
 // const rimraf=require('rimraf')
 // var findRemoveSync = require('find-remove');
 const app = express();
+const cors = require('cors')
 
+const corsOptions ={
+  origin:'http://localhost:3000', 
+  credentials:true,            //access-control-allow-credentials:true
+  optionSuccessStatus:200
+}
+app.use(cors(corsOptions));
 
 
 app.use(express.json({ limit: '50mb' }));
-app.use(cors());
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 
