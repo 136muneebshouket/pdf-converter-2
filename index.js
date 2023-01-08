@@ -15,19 +15,16 @@ const imagesToPdf = require("images-to-pdf");
 const app = express();
 const cors = require('cors')
 
-const corsOptions ={
-  origin:'https://office-to-pdf.adaptable.app', 
-  credentials:true,            //access-control-allow-credentials:true
-  optionSuccessStatus:200
-}
+// const corsOptions ={
+//   origin:'http://localhost:5000', 
+//   credentials:true,            //access-control-allow-credentials:true
+//   optionSuccessStatus:200
+// }
 app.use(cors());
 
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
-
-
-
 
 
 
@@ -143,7 +140,7 @@ app.post("/upload", upload.single('avatar'), async (req, res) => {
      
 
    }else{
-      let source = path.join(__dirname, req.file.path);
+      let source = path.join(__dirname, `./files/${req.file.filename}`);
       // console.log(req.file.filename)
     
       //  var outputpath = path.join(__dirname, `/files/${req.file.filename}${ext}`);
