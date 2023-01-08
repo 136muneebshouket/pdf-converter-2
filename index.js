@@ -21,7 +21,7 @@ const cors = require('cors')
 //   optionSuccessStatus:200
 // }
 app.use(cors({
-  origin: '*'
+  origin: 'http://localhost:3000'
 }));
 
 
