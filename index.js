@@ -36,7 +36,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'files')
+    cb(null,path.join(__dirname, `./files`) )
   },
   filename: function (req, file, cb) {
     // var ext = path.extname(file.originalname)
