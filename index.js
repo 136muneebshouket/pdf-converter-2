@@ -63,137 +63,155 @@ var loading = false;
 var stop = false;
 
 app.post("/upload", upload.single('avatar'), async (req, res) => {
-
-
-
-  if (req.file) {
-
-    filepath = req.file.filename;
-    loading = true;
-    //check filetype
-   if(req.file.filename.includes('.txt')){
-    
-    var fs = require('fs');
-
-    fs.readFile(`./files/${req.file.filename}`, 'utf-8', async(err, data) => {
-      if (err) { console.log(err)
-        res.json({status:500,data:'there is some error'});
-      }else{
-        let theOutput = new PDFGenerator
-           // pipe to a writable stream which would save the result into the same directory
-          theOutput.pipe(fs.createWriteStream(`./files/${req.file.filename}.pdf`))
-    
-          // write out file
-          if(stop == false){
-
-            let p1 = new Promise((resolve, reject) => {
-               theOutput.text(data);
-                theOutput.end();
-                resolve(true);
-            });
+try {
+  
+  console.log(31);
+  
+    if (req.file) {
+      console.log(32);
+  
+      filepath = req.file.filename;
+      loading = true;
+      //check filetype
+     if(req.file.filename.includes('.txt')){
+      
+      var fs = require('fs');
+  
+      fs.readFile(`./files/${req.file.filename}`, 'utf-8', async(err, data) => {
+        if (err) { console.log(err)
+          res.json({status:500,data:'there is some error'});
+        }else{
+          let theOutput = new PDFGenerator
+             // pipe to a writable stream which would save the result into the same directory
+            theOutput.pipe(fs.createWriteStream(`./files/${req.file.filename}.pdf`))
+      
+            // write out file
+            if(stop == false){
+  
+              let p1 = new Promise((resolve, reject) => {
+                 theOutput.text(data);
+                  theOutput.end();
+                  resolve(true);
+              });
+              
+               let pdf_done= await p1;
+  
+                  if(pdf_done){        
+                     pdf = req.file.filename;
+                    loading = false;
+                    res.json({status:200,data:'file is ready'});
+                    stop = false;
+                  }else{
+                    loading = false;
+                     res.json({status:500,data:'there is some error'});
+                     stop = false;
+                  }
+                 
+           }
+           else {
+               stop = false;
+               loading = false;
+               res.json({status:500,data:'please choosefile again'});
+          
+               return;
+           }
+        }
+       
             
-             let pdf_done= await p1;
-
-                if(pdf_done){        
-                   pdf = req.file.filename;
+  
+       })
+  
+     }else if(req.file.filename.includes('.png') || req.file.filename.includes('.jpg')){
+      // let source = path.join(__dirname, req.file.path);
+      // let destination = path.join(__dirname, `./pdfs/${req.file.filename}.pdf`);
+       if(stop == false){
+  
+        let img_done = await imagesToPdf([`./files/${req.file.filename}`], `./files/${req.file.filename}.pdf`)
+        if(img_done){
+          pdf = req.file.filename;
+          loading = false;
+          res.json({status:200,data:'file is ready'});
+          stop = false;
+        }else{
+          loading = false;
+           res.json({status:500,data:'there is some error'});
+           stop = false;
+        }
+       
+      }else{
+        stop = false;
+        loading = false;
+         res.json({status:500,data:'please choosefile again'});
+    
+         return;
+      }
+       
+  
+     }else{
+  console.log(33);
+  
+        let source = path.join(__dirname, `./files/${req.file.filename}`);
+        // console.log(req.file.filename)
+      
+        //  var outputpath = path.join(__dirname, `/files/${req.file.filename}${ext}`);
+        let destination = path.join(__dirname, `./files/${req.file.filename}.pdf`);
+  console.log(34);
+           
+         if (stop == false) {
+          console.log(35);
+  
+          let p2 = new Promise((resolve, reject) => {
+            toPdf.convert(source,destination, function (errors){
+              if(errors) {
+                reject(errors)
+              }
+              resolve(true)
+               })   
+               
+            
+            });
+  console.log(36);
+  
+               let done= await p2;
+               if(done){
+  console.log(37);
+  
+                p2.then(()=>{
+                  pdf = req.file.filename
                   loading = false;
                   res.json({status:200,data:'file is ready'});
                   stop = false;
-                }else{
-                  loading = false;
-                   res.json({status:500,data:'there is some error'});
-                   stop = false;
-                }
-               
-         }
-         else {
-             stop = false;
-             loading = false;
-             res.json({status:500,data:'please choosefile again'});
-        
-             return;
-         }
-      }
-     
-          
-
-     })
-
-   }else if(req.file.filename.includes('.png') || req.file.filename.includes('.jpg')){
-    // let source = path.join(__dirname, req.file.path);
-    // let destination = path.join(__dirname, `./pdfs/${req.file.filename}.pdf`);
-     if(stop == false){
-
-      let img_done = await imagesToPdf([`./files/${req.file.filename}`], `./files/${req.file.filename}.pdf`)
-      if(img_done){
-        pdf = req.file.filename;
-        loading = false;
-        res.json({status:200,data:'file is ready'});
-        stop = false;
-      }else{
-        loading = false;
-         res.json({status:500,data:'there is some error'});
-         stop = false;
-      }
-     
-    }else{
-      stop = false;
-      loading = false;
-       res.json({status:500,data:'please choosefile again'});
-  
-       return;
-    }
-     
-
-   }else{
-      let source = path.join(__dirname, `./files/${req.file.filename}`);
-      // console.log(req.file.filename)
-    
-      //  var outputpath = path.join(__dirname, `/files/${req.file.filename}${ext}`);
-      let destination = path.join(__dirname, `./files/${req.file.filename}.pdf`);
-         
-       if (stop == false) {
-
-        let p2 = new Promise((resolve, reject) => {
-          toPdf.convert(source,destination, function (errors){
-            if(errors) {
-              reject(errors)
-            }
-            resolve(true)
-             })   
-             
-          
-          });
-             let done= await p2;
-             if(done){
-              p2.then(()=>{
-                pdf = req.file.filename
-                loading = false;
-                res.json({status:200,data:'file is ready'});
-                stop = false;
-              }).catch(()=>{
-                stop = false;
-                loading = false;
-                res.json({status:500,data:'there is some error'});
-              })
-               
-             }
-               
-             
-          } else {
+                }).catch(()=>{
                   stop = false;
-              loading = false;
-              res.json({status:500,data:'please choosefile again'});
-     
-              return;
-          }
-
-     }
-
-    
+                  loading = false;
+                  res.json({status:500,data:'there is some error'});
+                })
+  console.log(38);
+                 
+               }
+                 
+               
+            } else {
+  console.log(39);
   
+                    stop = false;
+                loading = false;
+                res.json({status:500,data:'please choosefile again'});
+  console.log(40);
+       
+                return;
+            }
+  
+       }
+  
+      
     
-  }
+      
+    }
+} catch (error) {
+  console.log(error);
+  res.json({status: 500, data: error})
+}
 })
 
 
