@@ -51,7 +51,7 @@ const storage = multer.diskStorage({
 })
 
 
-var upload = multer({ storage: storage })
+const upload = multer({ storage: storage })
 
 // libre.convertAsync = require('util').promisify(libre.convert);
 
@@ -62,8 +62,8 @@ var loading = false;
 // var deletepdf = false;
 var stop = false;
 
-// app.post("/upload", upload.single('avatar'), async (req, res) => {
-app.post("/upload", async (req, res) => {
+app.post("/upload", upload.single('avatar'), async (req, res) => {
+// app.post("/upload", async (req, res) => {
 try {
   
   console.log(31);
