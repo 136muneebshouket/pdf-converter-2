@@ -62,8 +62,8 @@ var loading = false;
 // var deletepdf = false;
 var stop = false;
 
-app.post("/upload", upload.single('avatar'), async (req, res) => {
-// app.post("/upload", async (req, res) => {
+// app.post("/upload", upload.single('avatar'), async (req, res) => {
+app.post("/upload", async (req, res) => {
 try {
   
   console.log(31);
